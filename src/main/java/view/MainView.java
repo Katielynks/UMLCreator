@@ -9,6 +9,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class MainView {
@@ -38,10 +40,14 @@ public class MainView {
         HBox topMenu = new HBox(10);
         topMenu.setPadding(new Insets(10));
         topMenu.setAlignment(Pos.CENTER_LEFT);
-        topMenu.setStyle("-fx-background-color: #eeeeee;");
+        topMenu.setStyle("-fx-background-color: #13192bff;");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
 
         topMenu.getChildren().addAll(
-                new Label("UML Diagram Creator"),
+                createTitleLabel("UML Diagram Creator"),
+                spacer,
                 newButton,
                 openButton,
                 saveButton,
@@ -69,17 +75,17 @@ public class MainView {
         VBox shapeMenu = new VBox(10);
         shapeMenu.setPadding(new Insets(10));
         shapeMenu.setPrefWidth(180);
-        shapeMenu.setStyle("-fx-background-color: #f7f7f7;");
+        shapeMenu.setStyle("-fx-background-color: #13192bff;");
 
         shapeMenu.getChildren().addAll(
-                new Label("Shapes"),
+                createSectionLabel("Shapes"),
                 classButton,
                 interfaceButton,
                 abstractClassButton,
                 noteButton,
                 packageButton,
 
-                new Label("Relationships"),
+                createSectionLabel("Relationships"),
                 associationButton,
                 dependencyButton,
                 inheritanceButton,
@@ -94,7 +100,7 @@ public class MainView {
     private Pane createCanvasArea() {
         Pane canvasPane = new Pane();
         canvasPane.setPadding(new Insets(10));
-        canvasPane.setStyle("-fx-background-color: white;");
+        canvasPane.setStyle("-fx-background-color: black;");
 
         canvas.widthProperty().bind(canvasPane.widthProperty());
         canvas.heightProperty().bind(canvasPane.heightProperty());
@@ -110,16 +116,44 @@ public class MainView {
         button.setPrefWidth(150);
 
         button.setStyle(
-            "-fx-background-color: #ffffff;" +
-            "-fx-text-fill: #333333;" +
+            "-fx-background-color: #314172ff;" +
+            "-fx-text-fill: #ffffffff;" +
             "-fx-font-size: 13px;" +
+            "-fx-font-family: 'Segoe UI';" +
             "-fx-padding: 8 12 8 12;" +
             "-fx-background-radius: 6;" +
-            "-fx-border-color: #cccccc;" +
+            "-fx-border-color: #000000ff;" +
             "-fx-border-radius: 6;"
         );
 
         return button;
+    }
+
+
+    private Label createTitleLabel(String text) {
+        Label label = new Label(text);
+
+        label.setStyle(
+                "-fx-font-size: 18px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: #cad7e7ff;" +
+                "-fx-padding: 0 15 0 0;"
+        );
+
+        return label;
+    }
+
+    private Label createSectionLabel(String text) {
+        Label label = new Label(text);
+
+        label.setStyle(
+                "-fx-font-size: 14px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: #cad7e7ff;" +
+                "-fx-padding: 10 0 5 0;"
+        );
+
+        return label;
     }
 
 }
