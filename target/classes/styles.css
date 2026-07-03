@@ -1,0 +1,36 @@
+.shape-menu-scroll {
+    -fx-background-color: #13192b;
+    -fx-background: #13192b;
+}
+
+.shape-menu-scroll .viewport {
+    -fx-background-color: #13192b;
+}
+
+.shape-menu-scroll .scroll-bar:vertical {
+    -fx-background-color: #13192b;
+}
+
+.shape-menu-scroll .scroll-bar:vertical .track {
+    -fx-background-color: #13192b;
+}
+
+.shape-menu-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: #314172;
+    -fx-background-radius: 8;
+}
+
+.shape-menu-scroll .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #cad7e7;
+}
+
+.shape-menu-scroll .scroll-bar:vertical .increment-button,
+.shape-menu-scroll .scroll-bar:vertical .decrement-button {
+    -fx-background-color: #13192b;
+    -fx-padding: 0;
+}
+
+.shape-menu-scroll .scroll-bar:vertical .increment-arrow,
+.shape-menu-scroll .scroll-bar:vertical .decrement-arrow {
+    -fx-background-color: transparent;
+}

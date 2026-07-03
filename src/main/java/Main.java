@@ -11,6 +11,10 @@ public class Main extends Application {
 
         Scene scene = new Scene(mainView.getRoot(), 1000, 700);
 
+        scene.getStylesheets().add(
+            getClass().getResource("/styles.css").toExternalForm()
+        );
+
         primaryStage.setTitle("UML Diagram Creator");
         primaryStage.setScene(scene);
         primaryStage.show();
