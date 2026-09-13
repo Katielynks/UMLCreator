@@ -3,20 +3,34 @@ package view;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class ShapeMenuView {
 
     private final ScrollPane shapeMenu;
+    private final Runnable onClassButtonClicked;
+    private final Runnable onInterfaceButtonClicked;
+    private final Runnable onAbstractClassButtonClicked;
+    private final Runnable onNoteButtonClicked;
+    private final Runnable onPackageButtonClicked;
 
-    public ShapeMenuView() {
+    public ShapeMenuView(Runnable onClassButtonClicked, 
+        Runnable onInterfaceButtonClicked, 
+        Runnable onAbstractClassButtonClicked,
+        Runnable onNoteButtonClicked,
+        Runnable onPackageButtonClicked) {
+        this.onClassButtonClicked = onClassButtonClicked;
+        this.onInterfaceButtonClicked = onInterfaceButtonClicked;
+        this.onAbstractClassButtonClicked = onAbstractClassButtonClicked;
+        this.onNoteButtonClicked = onNoteButtonClicked;
+        this.onPackageButtonClicked = onPackageButtonClicked;
+
         shapeMenu = createShapeMenu();
     }
 
@@ -26,11 +40,16 @@ public class ShapeMenuView {
 
     private ScrollPane createShapeMenu() {
         Button classButton = UIComponentFactory.createMenuButton("Class");
+        classButton.setOnAction(event -> onClassButtonClicked.run());
         Button interfaceButton = UIComponentFactory.createMenuButton("Interface");
+        interfaceButton.setOnAction(event -> onInterfaceButtonClicked.run());
         Button abstractClassButton = UIComponentFactory.createMenuButton("Abstract Class");
+        abstractClassButton.setOnAction(event -> onAbstractClassButtonClicked.run());
         Button noteButton = UIComponentFactory.createMenuButton("Note");
+        noteButton.setOnAction(event -> onNoteButtonClicked.run());
         Button packageButton = UIComponentFactory.createMenuButton("Package");
-
+        packageButton.setOnAction(event -> onPackageButtonClicked.run());
+        
         Button associationButton = UIComponentFactory.createMenuButton("Association");
         Button dependencyButton = UIComponentFactory.createMenuButton("Dependency");
         Button inheritanceButton = UIComponentFactory.createMenuButton("Inheritance");

@@ -7,9 +7,13 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Scale;
+
+
 
 public class CanvasView {
 
@@ -19,8 +23,13 @@ public class CanvasView {
     private String canvasPattern = "blank";
     private double zoomLevel = 1.0;
 
+    private final Pane shapeLayer;
+    private final Scale shapeScale;
+
     public CanvasView() {
         canvas = new Canvas(800, 600);
+        shapeLayer = new Pane();
+        shapeScale = new Scale(1, 1, 0, 0);
         canvasArea = createCanvasArea();
     }
 
@@ -36,6 +45,10 @@ public class CanvasView {
         canvas.heightProperty().bind(area.heightProperty());
 
         area.getChildren().add(canvas);
+
+        shapeLayer.setPickOnBounds(false);
+        shapeLayer.getTransforms().add(shapeScale);
+        area.getChildren().add(shapeLayer);
 
         HBox canvasButtons = createCanvasPatternButtons();
         area.getChildren().add(canvasButtons);
@@ -56,6 +69,52 @@ public class CanvasView {
         return area;
     }
 
+    public void addClassBox() {
+        UMLClassBox classBox =
+            new UMLClassBox(
+                    () -> zoomLevel,
+                    this::selectOnly
+            );
+        shapeLayer.getChildren().add(classBox);
+    }
+
+    public void addInterfaceBox() {
+            UMLInterfaceBox interfaceBox =
+            new UMLInterfaceBox(
+                    () -> zoomLevel,
+                    this::selectOnly
+            );        
+            shapeLayer.getChildren().add(interfaceBox);
+    }
+
+    public void addAbstractClassBox() {
+    UMLAbstractClassBox abstractClassBox =
+        new UMLAbstractClassBox(
+                () -> zoomLevel,
+                this::selectOnly
+        );
+        shapeLayer.getChildren().add(abstractClassBox);
+    }
+
+    public void addNoteBox() {
+
+        UMLNoteBox noteBox =
+                new UMLNoteBox(
+                        () -> zoomLevel,
+                        this::selectOnly
+                );
+
+        shapeLayer.getChildren().add(noteBox);
+    }
+
+    public void addPackage() {
+        UMLPackage packageBox =
+            new UMLPackage(
+                    () -> zoomLevel,
+                    this::selectOnly
+            );
+        shapeLayer.getChildren().add(packageBox);
+    }
     private HBox createCanvasPatternButtons() {
         Button blankButton = UIComponentFactory.createSmallCanvasButton("Blank");
         Button linedButton = UIComponentFactory.createSmallCanvasButton("Lined");
@@ -99,6 +158,9 @@ public class CanvasView {
         if (zoomLevel > 3.0) {
             zoomLevel = 3.0;
         }
+
+        shapeScale.setX(zoomLevel);
+        shapeScale.setY(zoomLevel);
 
         drawCanvasBackground();
     }
@@ -148,4 +210,18 @@ public class CanvasView {
             }
         }
     }
+
+    private void selectOnly(UMLShapeBox selectedShape) {
+
+        for (javafx.scene.Node node : shapeLayer.getChildren()) {
+
+            if (node instanceof UMLShapeBox) {
+
+                UMLShapeBox shape = (UMLShapeBox) node;
+
+                shape.setSelected(shape == selectedShape);
+            }
+        }
+    }
+
 }

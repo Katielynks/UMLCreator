@@ -10,9 +10,18 @@ public class MainView {
     public MainView() {
         root = new BorderPane();
 
+        CanvasView canvasView = new CanvasView();
+
         root.setTop(new TopMenuView().getView());
-        root.setLeft(new ShapeMenuView().getView());
-        root.setCenter(new CanvasView().getView());
+        root.setLeft(new ShapeMenuView(
+            canvasView::addClassBox,
+            canvasView::addInterfaceBox,
+            canvasView::addAbstractClassBox,
+            canvasView::addNoteBox,
+            canvasView::addPackage
+        ).getView());
+        
+        root.setCenter(canvasView.getView());
     }
 
     public Parent getRoot() {
