@@ -211,17 +211,67 @@ public class CanvasView {
         }
     }
 
-    private void selectOnly(UMLShapeBox selectedShape) {
+    private void selectOnly(Object selectedObject) {
 
         for (javafx.scene.Node node : shapeLayer.getChildren()) {
 
             if (node instanceof UMLShapeBox) {
-
                 UMLShapeBox shape = (UMLShapeBox) node;
+                shape.setSelected(node == selectedObject);
+            }
 
-                shape.setSelected(shape == selectedShape);
+            if (node instanceof ARRRelationship) {
+                ARRRelationship relationship = (ARRRelationship) node;
+                relationship.setSelected(node == selectedObject);
             }
         }
     }
 
+    public void addAssociation() {
+
+        ARRAssociation association =
+                new ARRAssociation(this::selectOnly);
+
+        shapeLayer.getChildren().add(association);
+    }
+
+    public void addDependency() {
+
+        ARRDependency dependency =
+                new ARRDependency(this::selectOnly);
+
+        shapeLayer.getChildren().add(dependency);
+    }
+
+    public void addInheritance() {
+
+        ARRInheritance inheritance =
+                new ARRInheritance(this::selectOnly);
+
+        shapeLayer.getChildren().add(inheritance);
+    }
+
+    public void addImplementation() {
+
+        ARRImplementation implementation =
+                new ARRImplementation(this::selectOnly);
+
+        shapeLayer.getChildren().add(implementation);
+    }
+
+    public void addAggregation() {
+
+        ARRAggregation aggregation =
+                new ARRAggregation(this::selectOnly);
+
+        shapeLayer.getChildren().add(aggregation);
+    }
+
+    public void addComposition() {
+
+        ARRComposition composition =
+                new ARRComposition(this::selectOnly);
+
+        shapeLayer.getChildren().add(composition);
+    }
 }

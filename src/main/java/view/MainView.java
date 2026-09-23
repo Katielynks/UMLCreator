@@ -18,7 +18,13 @@ public class MainView {
             canvasView::addInterfaceBox,
             canvasView::addAbstractClassBox,
             canvasView::addNoteBox,
-            canvasView::addPackage
+            canvasView::addPackage,
+            canvasView::addAssociation,
+            canvasView::addDependency,
+            canvasView::addInheritance,
+            canvasView::addImplementation,
+            canvasView::addAggregation,
+            canvasView::addComposition
         ).getView());
         
         root.setCenter(canvasView.getView());

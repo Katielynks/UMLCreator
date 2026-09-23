@@ -20,16 +20,36 @@ public class ShapeMenuView {
     private final Runnable onNoteButtonClicked;
     private final Runnable onPackageButtonClicked;
 
+    private final Runnable onAssociationButtonClicked;
+    private final Runnable onDependencyButtonClicked;
+    private final Runnable onInheritanceButtonClicked;
+    private final Runnable onImplementationButtonClicked;
+    private final Runnable onAggregationButtonClicked;
+    private final Runnable onCompositionButtonClicked;
+
     public ShapeMenuView(Runnable onClassButtonClicked, 
         Runnable onInterfaceButtonClicked, 
         Runnable onAbstractClassButtonClicked,
         Runnable onNoteButtonClicked,
-        Runnable onPackageButtonClicked) {
+        Runnable onPackageButtonClicked,
+        Runnable onAssociationButtonClicked,
+        Runnable onDependencyButtonClicked,
+        Runnable onInheritanceButtonClicked,
+        Runnable onImplementationButtonClicked,
+        Runnable onAggregationButtonClicked,
+        Runnable onCompositionButtonClicked) {
         this.onClassButtonClicked = onClassButtonClicked;
         this.onInterfaceButtonClicked = onInterfaceButtonClicked;
         this.onAbstractClassButtonClicked = onAbstractClassButtonClicked;
         this.onNoteButtonClicked = onNoteButtonClicked;
         this.onPackageButtonClicked = onPackageButtonClicked;
+
+        this.onAssociationButtonClicked = onAssociationButtonClicked;
+        this.onDependencyButtonClicked = onDependencyButtonClicked;
+        this.onInheritanceButtonClicked = onInheritanceButtonClicked;
+        this.onImplementationButtonClicked = onImplementationButtonClicked;
+        this.onAggregationButtonClicked = onAggregationButtonClicked;
+        this.onCompositionButtonClicked = onCompositionButtonClicked;
 
         shapeMenu = createShapeMenu();
     }
@@ -51,11 +71,17 @@ public class ShapeMenuView {
         packageButton.setOnAction(event -> onPackageButtonClicked.run());
         
         Button associationButton = UIComponentFactory.createMenuButton("Association");
+        associationButton.setOnAction(event -> onAssociationButtonClicked.run());
         Button dependencyButton = UIComponentFactory.createMenuButton("Dependency");
+        dependencyButton.setOnAction(event -> onDependencyButtonClicked.run());
         Button inheritanceButton = UIComponentFactory.createMenuButton("Inheritance");
+        inheritanceButton.setOnAction(event -> onInheritanceButtonClicked.run());
         Button implementationButton = UIComponentFactory.createMenuButton("Implementation");
+        implementationButton.setOnAction(event -> onImplementationButtonClicked.run());
         Button aggregationButton = UIComponentFactory.createMenuButton("Aggregation");
+        aggregationButton.setOnAction(event -> onAggregationButtonClicked.run());
         Button compositionButton = UIComponentFactory.createMenuButton("Composition");
+        compositionButton.setOnAction(event -> onCompositionButtonClicked.run());
 
         HBox colorPicker = createColorPickerControl();
 
