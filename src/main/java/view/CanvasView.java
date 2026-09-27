@@ -15,7 +15,7 @@ import javafx.scene.transform.Scale;
 import view.arrows.*;
 import view.shapes.*;
 
-
+import view.export.DiagramSave;
 
 public class CanvasView {
 
@@ -30,11 +30,21 @@ public class CanvasView {
 
     private Object selectedObject;
 
+    private final DiagramSave diagramSave;
+
     public CanvasView() {
         canvas = new Canvas(800, 600);
         shapeLayer = new Pane();
         shapeScale = new Scale(1, 1, 0, 0);
         canvasArea = createCanvasArea();
+
+
+        diagramSave = new DiagramSave(
+                canvasArea,
+                canvas,
+                shapeLayer,
+                shapeScale
+        );
     }
 
     public StackPane getView() {
@@ -292,5 +302,10 @@ public class CanvasView {
                 new ARRComposition(this::selectOnly);
 
         shapeLayer.getChildren().add(composition);
+    }
+
+
+    public void saveDiagramAsJpeg() {
+        diagramSave.saveDiagramAsJpeg(canvasPattern);
     }
 }

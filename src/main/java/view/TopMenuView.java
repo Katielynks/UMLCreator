@@ -10,8 +10,10 @@ import javafx.scene.layout.Region;
 public class TopMenuView {
 
     private final HBox topMenu;
+    private final Runnable onSaveClicked;
 
-    public TopMenuView() {
+    public TopMenuView(Runnable onSaveClicked) {
+        this.onSaveClicked = onSaveClicked;
         topMenu = createTopMenu();
     }
 
@@ -23,6 +25,7 @@ public class TopMenuView {
         Button newButton = UIComponentFactory.createMenuButton("New");
         Button openButton = UIComponentFactory.createMenuButton("Open");
         Button saveButton = UIComponentFactory.createMenuButton("Save");
+        saveButton.setOnAction(event -> onSaveClicked.run());
         Button exportButton = UIComponentFactory.createMenuButton("Export");
 
         HBox menu = new HBox(10);
