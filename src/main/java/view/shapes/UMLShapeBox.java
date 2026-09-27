@@ -1,4 +1,4 @@
-package view;
+package view.shapes;
 
 import java.util.function.Consumer;
 

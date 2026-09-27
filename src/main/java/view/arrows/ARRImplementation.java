@@ -1,4 +1,4 @@
-package view;
+package view.arrows;
 
 import java.util.function.Consumer;
 
@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 
-public class ARRInheritance extends ARRRelationship {
+public class ARRImplementation extends ARRRelationship {
 
     private static final double HANDLE_SIZE = 10;
 
@@ -19,7 +19,7 @@ public class ARRInheritance extends ARRRelationship {
     private final Line hitLine;
     private final Line line;
 
-    // Hollow triangle for inheritance
+    // Hollow triangle
     private final Polygon arrowHead;
 
     private final Region startHandle;
@@ -31,7 +31,7 @@ public class ARRInheritance extends ARRRelationship {
     private double endX = 180;
     private double endY = 50;
 
-    public ARRInheritance(
+    public ARRImplementation(
             Consumer<ARRRelationship> onSelected) {
 
         super(onSelected);
@@ -43,21 +43,28 @@ public class ARRInheritance extends ARRRelationship {
         setPickOnBounds(false);
 
         /*
-         * Invisible thicker line for easier clicking.
+         * Invisible thick line for easier clicking.
          */
         hitLine = new Line();
+
         hitLine.setStroke(Color.TRANSPARENT);
         hitLine.setStrokeWidth(14);
 
         /*
-         * Visible inheritance line.
+         * Visible dashed implementation line.
          */
         line = new Line();
+
+        line.getStrokeDashArray().addAll(
+                10.0,
+                7.0
+        );
 
         /*
          * Hollow triangle arrowhead.
          */
         arrowHead = new Polygon();
+
         arrowHead.setFill(Color.TRANSPARENT);
 
         /*
@@ -66,9 +73,6 @@ public class ARRInheritance extends ARRRelationship {
         startHandle = createHandle();
         endHandle = createHandle();
 
-        /*
-         * Hit line stays behind everything else.
-         */
         getChildren().addAll(
                 hitLine,
                 line,
@@ -79,14 +83,20 @@ public class ARRInheritance extends ARRRelationship {
 
         updateLine();
 
-        makeSelectable();
-
+        /*
+         * Dragging the line or arrowhead
+         * moves the entire relationship.
+         */
         makeDraggable(
                 hitLine,
                 line,
                 arrowHead
         );
 
+        /*
+         * Dragging the little squares
+         * moves only that endpoint.
+         */
         makeStartHandleDraggable();
         makeEndHandleDraggable();
 
@@ -117,37 +127,12 @@ public class ARRInheritance extends ARRRelationship {
         return handle;
     }
 
-    private void makeSelectable() {
-
-        /*
-         * Larger invisible clickable area.
-         */
-        hitLine.setOnMousePressed(event -> {
-            selectThis();
-            event.consume();
-        });
-
-        /*
-         * Visible line.
-         */
-        line.setOnMousePressed(event -> {
-            selectThis();
-            event.consume();
-        });
-
-        /*
-         * Triangle arrowhead.
-         */
-        arrowHead.setOnMousePressed(event -> {
-            selectThis();
-            event.consume();
-        });
-    }
-
     private void makeStartHandleDraggable() {
 
         startHandle.setOnMousePressed(event -> {
+
             selectThis();
+
             event.consume();
         });
 
@@ -170,7 +155,9 @@ public class ARRInheritance extends ARRRelationship {
     private void makeEndHandleDraggable() {
 
         endHandle.setOnMousePressed(event -> {
+
             selectThis();
+
             event.consume();
         });
 
@@ -193,7 +180,7 @@ public class ARRInheritance extends ARRRelationship {
     private void updateLine() {
 
         /*
-         * Visible line.
+         * Visible dashed line.
          */
         line.setStartX(startX);
         line.setStartY(startY);
@@ -202,7 +189,8 @@ public class ARRInheritance extends ARRRelationship {
         line.setEndY(endY);
 
         /*
-         * Invisible hitbox follows the same line.
+         * Invisible hitbox follows
+         * the same coordinates.
          */
         hitLine.setStartX(startX);
         hitLine.setStartY(startY);
@@ -228,16 +216,13 @@ public class ARRInheritance extends ARRRelationship {
 
     private void updateArrowHead() {
 
-        /*
-         * Direction of the relationship.
-         */
         double angle = Math.atan2(
                 endY - startY,
                 endX - startX
         );
 
         /*
-         * Point behind the arrow tip.
+         * Center of the back of the triangle.
          */
         double baseX =
                 endX - ARROW_LENGTH * Math.cos(angle);
@@ -246,8 +231,7 @@ public class ARRInheritance extends ARRRelationship {
                 endY - ARROW_LENGTH * Math.sin(angle);
 
         /*
-         * Perpendicular direction used to create
-         * the width of the triangle.
+         * Perpendicular direction.
          */
         double perpendicularX =
                 -Math.sin(angle);
@@ -256,7 +240,7 @@ public class ARRInheritance extends ARRRelationship {
                 Math.cos(angle);
 
         /*
-         * Two back corners of the triangle.
+         * Left corner.
          */
         double leftX =
                 baseX
@@ -266,6 +250,9 @@ public class ARRInheritance extends ARRRelationship {
                 baseY
                 + ARROW_WIDTH * perpendicularY;
 
+        /*
+         * Right corner.
+         */
         double rightX =
                 baseX
                 - ARROW_WIDTH * perpendicularX;
@@ -275,13 +262,7 @@ public class ARRInheritance extends ARRRelationship {
                 - ARROW_WIDTH * perpendicularY;
 
         /*
-         * Hollow inheritance triangle:
-         *
-         *        /\
-         * ------/  \
-         *       \  /
-         *
-         * Tip is at endX/endY.
+         * Hollow triangle.
          */
         arrowHead.getPoints().setAll(
                 endX, endY,
@@ -303,7 +284,7 @@ public class ARRInheritance extends ARRRelationship {
                 selected ? 2 : 1;
 
         /*
-         * Solid inheritance line.
+         * Dashed line.
          */
         line.setStroke(color);
         line.setStrokeWidth(width);
@@ -316,7 +297,7 @@ public class ARRInheritance extends ARRRelationship {
         arrowHead.setStrokeWidth(width);
 
         /*
-         * Endpoint boxes.
+         * Endpoint handles.
          */
         startHandle.setVisible(selected);
         endHandle.setVisible(selected);

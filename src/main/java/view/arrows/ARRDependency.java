@@ -1,4 +1,4 @@
-package view;
+package view.arrows;
 
 import java.util.function.Consumer;
 
@@ -7,20 +7,19 @@ import javafx.scene.Cursor;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
 
-public class ARRComposition extends ARRRelationship {
+public class ARRDependency extends ARRRelationship {
 
     private static final double HANDLE_SIZE = 10;
 
-    private static final double DIAMOND_LENGTH = 22;
-    private static final double DIAMOND_WIDTH = 9;
+    private static final double ARROW_LENGTH = 16;
+    private static final double ARROW_ANGLE = Math.toRadians(28);
 
     private final Line hitLine;
     private final Line line;
 
-    // Filled diamond for composition
-    private final Polygon diamond;
+    private final Line arrowLeft;
+    private final Line arrowRight;
 
     private final Region startHandle;
     private final Region endHandle;
@@ -31,7 +30,7 @@ public class ARRComposition extends ARRRelationship {
     private double endX = 180;
     private double endY = 50;
 
-    public ARRComposition(
+    public ARRDependency(
             Consumer<ARRRelationship> onSelected) {
 
         super(onSelected);
@@ -43,21 +42,29 @@ public class ARRComposition extends ARRRelationship {
         setPickOnBounds(false);
 
         /*
-         * Larger invisible hitbox.
+         * Invisible thick line.
+         * This gives the relationship a larger clickable area.
          */
         hitLine = new Line();
+
         hitLine.setStroke(Color.TRANSPARENT);
         hitLine.setStrokeWidth(14);
 
         /*
-         * Visible solid line.
+         * Visible dependency line.
          */
         line = new Line();
 
+        line.getStrokeDashArray().addAll(
+                10.0,
+                7.0
+        );
+
         /*
-         * Filled composition diamond.
+         * Open arrowhead.
          */
-        diamond = new Polygon();
+        arrowLeft = new Line();
+        arrowRight = new Line();
 
         /*
          * Endpoint handles.
@@ -65,30 +72,30 @@ public class ARRComposition extends ARRRelationship {
         startHandle = createHandle();
         endHandle = createHandle();
 
+        /*
+         * hitLine goes first so it stays behind
+         * the visible relationship.
+         */
         getChildren().addAll(
                 hitLine,
                 line,
-                diamond,
+                arrowLeft,
+                arrowRight,
                 startHandle,
                 endHandle
         );
 
         updateLine();
 
-        /*
-         * Dragging the line or diamond
-         * moves the whole relationship.
-         */
+        makeSelectable();
+
         makeDraggable(
-                hitLine,
-                line,
-                diamond
+            hitLine,
+            line,
+            arrowLeft,
+            arrowRight
         );
 
-        /*
-         * Dragging either square changes
-         * only that endpoint.
-         */
         makeStartHandleDraggable();
         makeEndHandleDraggable();
 
@@ -119,12 +126,37 @@ public class ARRComposition extends ARRRelationship {
         return handle;
     }
 
+    private void makeSelectable() {
+
+        /*
+         * The invisible hitbox catches clicks
+         * near the line.
+         */
+        hitLine.setOnMousePressed(event -> {
+            selectThis();
+            event.consume();
+        });
+
+        line.setOnMousePressed(event -> {
+            selectThis();
+            event.consume();
+        });
+
+        arrowLeft.setOnMousePressed(event -> {
+            selectThis();
+            event.consume();
+        });
+
+        arrowRight.setOnMousePressed(event -> {
+            selectThis();
+            event.consume();
+        });
+    }
+
     private void makeStartHandleDraggable() {
 
         startHandle.setOnMousePressed(event -> {
-
             selectThis();
-
             event.consume();
         });
 
@@ -147,9 +179,7 @@ public class ARRComposition extends ARRRelationship {
     private void makeEndHandleDraggable() {
 
         endHandle.setOnMousePressed(event -> {
-
             selectThis();
-
             event.consume();
         });
 
@@ -171,33 +201,18 @@ public class ARRComposition extends ARRRelationship {
 
     private void updateLine() {
 
-        double angle = Math.atan2(
-                endY - startY,
-                endX - startX
-        );
-
         /*
-         * Back of the diamond.
-         */
-        double backX =
-                endX - DIAMOND_LENGTH * Math.cos(angle);
-
-        double backY =
-                endY - DIAMOND_LENGTH * Math.sin(angle);
-
-        /*
-         * Visible line stops at the back
-         * of the diamond.
+         * Visible dashed line.
          */
         line.setStartX(startX);
         line.setStartY(startY);
 
-        line.setEndX(backX);
-        line.setEndY(backY);
+        line.setEndX(endX);
+        line.setEndY(endY);
 
         /*
-         * Invisible hitbox covers the whole
-         * relationship.
+         * Invisible hitbox line follows
+         * the exact same coordinates.
          */
         hitLine.setStartX(startX);
         hitLine.setStartY(startY);
@@ -218,78 +233,55 @@ public class ARRComposition extends ARRRelationship {
                 endY - HANDLE_SIZE / 2
         );
 
-        updateDiamond();
+        updateArrowHead();
     }
 
-    private void updateDiamond() {
+    private void updateArrowHead() {
 
         double angle = Math.atan2(
                 endY - startY,
                 endX - startX
         );
 
-        /*
-         * Front tip of diamond.
-         */
-        double tipX = endX;
-        double tipY = endY;
+        double leftAngle =
+                angle + Math.PI - ARROW_ANGLE;
 
-        /*
-         * Back point of diamond.
-         */
-        double backX =
-                endX - DIAMOND_LENGTH * Math.cos(angle);
+        double rightAngle =
+                angle + Math.PI + ARROW_ANGLE;
 
-        double backY =
-                endY - DIAMOND_LENGTH * Math.sin(angle);
-
-        /*
-         * Center of diamond.
-         */
-        double centerX =
-                endX
-                - (DIAMOND_LENGTH / 2)
-                * Math.cos(angle);
-
-        double centerY =
-                endY
-                - (DIAMOND_LENGTH / 2)
-                * Math.sin(angle);
-
-        /*
-         * Perpendicular direction.
-         */
-        double perpendicularX =
-                -Math.sin(angle);
-
-        double perpendicularY =
-                Math.cos(angle);
-
-        /*
-         * Side points.
-         */
         double leftX =
-                centerX
-                + DIAMOND_WIDTH * perpendicularX;
+                endX
+                + ARROW_LENGTH * Math.cos(leftAngle);
 
         double leftY =
-                centerY
-                + DIAMOND_WIDTH * perpendicularY;
+                endY
+                + ARROW_LENGTH * Math.sin(leftAngle);
 
         double rightX =
-                centerX
-                - DIAMOND_WIDTH * perpendicularX;
+                endX
+                + ARROW_LENGTH * Math.cos(rightAngle);
 
         double rightY =
-                centerY
-                - DIAMOND_WIDTH * perpendicularY;
+                endY
+                + ARROW_LENGTH * Math.sin(rightAngle);
 
-        diamond.getPoints().setAll(
-                tipX, tipY,
-                leftX, leftY,
-                backX, backY,
-                rightX, rightY
-        );
+        /*
+         * Left side of open arrowhead.
+         */
+        arrowLeft.setStartX(endX);
+        arrowLeft.setStartY(endY);
+
+        arrowLeft.setEndX(leftX);
+        arrowLeft.setEndY(leftY);
+
+        /*
+         * Right side of open arrowhead.
+         */
+        arrowRight.setStartX(endX);
+        arrowRight.setStartY(endY);
+
+        arrowRight.setEndX(rightX);
+        arrowRight.setEndY(rightY);
     }
 
     @Override
@@ -305,20 +297,23 @@ public class ARRComposition extends ARRRelationship {
                 selected ? 2 : 1;
 
         /*
-         * Solid line.
+         * Visible dashed line.
          */
         line.setStroke(color);
         line.setStrokeWidth(width);
 
         /*
-         * FILLED diamond.
+         * Arrowhead.
          */
-        diamond.setFill(color);
-        diamond.setStroke(color);
-        diamond.setStrokeWidth(width);
+        arrowLeft.setStroke(color);
+        arrowLeft.setStrokeWidth(width);
+
+        arrowRight.setStroke(color);
+        arrowRight.setStrokeWidth(width);
 
         /*
-         * Endpoint handles.
+         * Endpoint handles only show
+         * when selected.
          */
         startHandle.setVisible(selected);
         endHandle.setVisible(selected);

@@ -1,4 +1,4 @@
-package view;
+package view.arrows;
 
 import java.util.function.Consumer;
 
@@ -7,19 +7,20 @@ import javafx.scene.Cursor;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 
-public class ARRDependency extends ARRRelationship {
+public class ARRInheritance extends ARRRelationship {
 
     private static final double HANDLE_SIZE = 10;
 
-    private static final double ARROW_LENGTH = 16;
-    private static final double ARROW_ANGLE = Math.toRadians(28);
+    private static final double ARROW_LENGTH = 18;
+    private static final double ARROW_WIDTH = 10;
 
     private final Line hitLine;
     private final Line line;
 
-    private final Line arrowLeft;
-    private final Line arrowRight;
+    // Hollow triangle for inheritance
+    private final Polygon arrowHead;
 
     private final Region startHandle;
     private final Region endHandle;
@@ -30,7 +31,7 @@ public class ARRDependency extends ARRRelationship {
     private double endX = 180;
     private double endY = 50;
 
-    public ARRDependency(
+    public ARRInheritance(
             Consumer<ARRRelationship> onSelected) {
 
         super(onSelected);
@@ -42,29 +43,22 @@ public class ARRDependency extends ARRRelationship {
         setPickOnBounds(false);
 
         /*
-         * Invisible thick line.
-         * This gives the relationship a larger clickable area.
+         * Invisible thicker line for easier clicking.
          */
         hitLine = new Line();
-
         hitLine.setStroke(Color.TRANSPARENT);
         hitLine.setStrokeWidth(14);
 
         /*
-         * Visible dependency line.
+         * Visible inheritance line.
          */
         line = new Line();
 
-        line.getStrokeDashArray().addAll(
-                10.0,
-                7.0
-        );
-
         /*
-         * Open arrowhead.
+         * Hollow triangle arrowhead.
          */
-        arrowLeft = new Line();
-        arrowRight = new Line();
+        arrowHead = new Polygon();
+        arrowHead.setFill(Color.TRANSPARENT);
 
         /*
          * Endpoint handles.
@@ -73,14 +67,12 @@ public class ARRDependency extends ARRRelationship {
         endHandle = createHandle();
 
         /*
-         * hitLine goes first so it stays behind
-         * the visible relationship.
+         * Hit line stays behind everything else.
          */
         getChildren().addAll(
                 hitLine,
                 line,
-                arrowLeft,
-                arrowRight,
+                arrowHead,
                 startHandle,
                 endHandle
         );
@@ -90,10 +82,9 @@ public class ARRDependency extends ARRRelationship {
         makeSelectable();
 
         makeDraggable(
-            hitLine,
-            line,
-            arrowLeft,
-            arrowRight
+                hitLine,
+                line,
+                arrowHead
         );
 
         makeStartHandleDraggable();
@@ -129,25 +120,25 @@ public class ARRDependency extends ARRRelationship {
     private void makeSelectable() {
 
         /*
-         * The invisible hitbox catches clicks
-         * near the line.
+         * Larger invisible clickable area.
          */
         hitLine.setOnMousePressed(event -> {
             selectThis();
             event.consume();
         });
 
+        /*
+         * Visible line.
+         */
         line.setOnMousePressed(event -> {
             selectThis();
             event.consume();
         });
 
-        arrowLeft.setOnMousePressed(event -> {
-            selectThis();
-            event.consume();
-        });
-
-        arrowRight.setOnMousePressed(event -> {
+        /*
+         * Triangle arrowhead.
+         */
+        arrowHead.setOnMousePressed(event -> {
             selectThis();
             event.consume();
         });
@@ -202,7 +193,7 @@ public class ARRDependency extends ARRRelationship {
     private void updateLine() {
 
         /*
-         * Visible dashed line.
+         * Visible line.
          */
         line.setStartX(startX);
         line.setStartY(startY);
@@ -211,8 +202,7 @@ public class ARRDependency extends ARRRelationship {
         line.setEndY(endY);
 
         /*
-         * Invisible hitbox line follows
-         * the exact same coordinates.
+         * Invisible hitbox follows the same line.
          */
         hitLine.setStartX(startX);
         hitLine.setStartY(startY);
@@ -238,50 +228,66 @@ public class ARRDependency extends ARRRelationship {
 
     private void updateArrowHead() {
 
+        /*
+         * Direction of the relationship.
+         */
         double angle = Math.atan2(
                 endY - startY,
                 endX - startX
         );
 
-        double leftAngle =
-                angle + Math.PI - ARROW_ANGLE;
+        /*
+         * Point behind the arrow tip.
+         */
+        double baseX =
+                endX - ARROW_LENGTH * Math.cos(angle);
 
-        double rightAngle =
-                angle + Math.PI + ARROW_ANGLE;
+        double baseY =
+                endY - ARROW_LENGTH * Math.sin(angle);
 
+        /*
+         * Perpendicular direction used to create
+         * the width of the triangle.
+         */
+        double perpendicularX =
+                -Math.sin(angle);
+
+        double perpendicularY =
+                Math.cos(angle);
+
+        /*
+         * Two back corners of the triangle.
+         */
         double leftX =
-                endX
-                + ARROW_LENGTH * Math.cos(leftAngle);
+                baseX
+                + ARROW_WIDTH * perpendicularX;
 
         double leftY =
-                endY
-                + ARROW_LENGTH * Math.sin(leftAngle);
+                baseY
+                + ARROW_WIDTH * perpendicularY;
 
         double rightX =
-                endX
-                + ARROW_LENGTH * Math.cos(rightAngle);
+                baseX
+                - ARROW_WIDTH * perpendicularX;
 
         double rightY =
-                endY
-                + ARROW_LENGTH * Math.sin(rightAngle);
+                baseY
+                - ARROW_WIDTH * perpendicularY;
 
         /*
-         * Left side of open arrowhead.
+         * Hollow inheritance triangle:
+         *
+         *        /\
+         * ------/  \
+         *       \  /
+         *
+         * Tip is at endX/endY.
          */
-        arrowLeft.setStartX(endX);
-        arrowLeft.setStartY(endY);
-
-        arrowLeft.setEndX(leftX);
-        arrowLeft.setEndY(leftY);
-
-        /*
-         * Right side of open arrowhead.
-         */
-        arrowRight.setStartX(endX);
-        arrowRight.setStartY(endY);
-
-        arrowRight.setEndX(rightX);
-        arrowRight.setEndY(rightY);
+        arrowHead.getPoints().setAll(
+                endX, endY,
+                leftX, leftY,
+                rightX, rightY
+        );
     }
 
     @Override
@@ -297,23 +303,20 @@ public class ARRDependency extends ARRRelationship {
                 selected ? 2 : 1;
 
         /*
-         * Visible dashed line.
+         * Solid inheritance line.
          */
         line.setStroke(color);
         line.setStrokeWidth(width);
 
         /*
-         * Arrowhead.
+         * Hollow triangle.
          */
-        arrowLeft.setStroke(color);
-        arrowLeft.setStrokeWidth(width);
-
-        arrowRight.setStroke(color);
-        arrowRight.setStrokeWidth(width);
+        arrowHead.setFill(Color.TRANSPARENT);
+        arrowHead.setStroke(color);
+        arrowHead.setStrokeWidth(width);
 
         /*
-         * Endpoint handles only show
-         * when selected.
+         * Endpoint boxes.
          */
         startHandle.setVisible(selected);
         endHandle.setVisible(selected);

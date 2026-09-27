@@ -1,4 +1,4 @@
-package view;
+package view.arrows;
 
 import java.util.function.Consumer;
 
@@ -9,18 +9,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 
-public class ARRImplementation extends ARRRelationship {
+public class ARRComposition extends ARRRelationship {
 
     private static final double HANDLE_SIZE = 10;
 
-    private static final double ARROW_LENGTH = 18;
-    private static final double ARROW_WIDTH = 10;
+    private static final double DIAMOND_LENGTH = 22;
+    private static final double DIAMOND_WIDTH = 9;
 
     private final Line hitLine;
     private final Line line;
 
-    // Hollow triangle
-    private final Polygon arrowHead;
+    // Filled diamond for composition
+    private final Polygon diamond;
 
     private final Region startHandle;
     private final Region endHandle;
@@ -31,7 +31,7 @@ public class ARRImplementation extends ARRRelationship {
     private double endX = 180;
     private double endY = 50;
 
-    public ARRImplementation(
+    public ARRComposition(
             Consumer<ARRRelationship> onSelected) {
 
         super(onSelected);
@@ -43,29 +43,21 @@ public class ARRImplementation extends ARRRelationship {
         setPickOnBounds(false);
 
         /*
-         * Invisible thick line for easier clicking.
+         * Larger invisible hitbox.
          */
         hitLine = new Line();
-
         hitLine.setStroke(Color.TRANSPARENT);
         hitLine.setStrokeWidth(14);
 
         /*
-         * Visible dashed implementation line.
+         * Visible solid line.
          */
         line = new Line();
 
-        line.getStrokeDashArray().addAll(
-                10.0,
-                7.0
-        );
-
         /*
-         * Hollow triangle arrowhead.
+         * Filled composition diamond.
          */
-        arrowHead = new Polygon();
-
-        arrowHead.setFill(Color.TRANSPARENT);
+        diamond = new Polygon();
 
         /*
          * Endpoint handles.
@@ -76,7 +68,7 @@ public class ARRImplementation extends ARRRelationship {
         getChildren().addAll(
                 hitLine,
                 line,
-                arrowHead,
+                diamond,
                 startHandle,
                 endHandle
         );
@@ -84,18 +76,18 @@ public class ARRImplementation extends ARRRelationship {
         updateLine();
 
         /*
-         * Dragging the line or arrowhead
-         * moves the entire relationship.
+         * Dragging the line or diamond
+         * moves the whole relationship.
          */
         makeDraggable(
                 hitLine,
                 line,
-                arrowHead
+                diamond
         );
 
         /*
-         * Dragging the little squares
-         * moves only that endpoint.
+         * Dragging either square changes
+         * only that endpoint.
          */
         makeStartHandleDraggable();
         makeEndHandleDraggable();
@@ -179,18 +171,33 @@ public class ARRImplementation extends ARRRelationship {
 
     private void updateLine() {
 
+        double angle = Math.atan2(
+                endY - startY,
+                endX - startX
+        );
+
         /*
-         * Visible dashed line.
+         * Back of the diamond.
+         */
+        double backX =
+                endX - DIAMOND_LENGTH * Math.cos(angle);
+
+        double backY =
+                endY - DIAMOND_LENGTH * Math.sin(angle);
+
+        /*
+         * Visible line stops at the back
+         * of the diamond.
          */
         line.setStartX(startX);
         line.setStartY(startY);
 
-        line.setEndX(endX);
-        line.setEndY(endY);
+        line.setEndX(backX);
+        line.setEndY(backY);
 
         /*
-         * Invisible hitbox follows
-         * the same coordinates.
+         * Invisible hitbox covers the whole
+         * relationship.
          */
         hitLine.setStartX(startX);
         hitLine.setStartY(startY);
@@ -211,10 +218,10 @@ public class ARRImplementation extends ARRRelationship {
                 endY - HANDLE_SIZE / 2
         );
 
-        updateArrowHead();
+        updateDiamond();
     }
 
-    private void updateArrowHead() {
+    private void updateDiamond() {
 
         double angle = Math.atan2(
                 endY - startY,
@@ -222,13 +229,32 @@ public class ARRImplementation extends ARRRelationship {
         );
 
         /*
-         * Center of the back of the triangle.
+         * Front tip of diamond.
          */
-        double baseX =
-                endX - ARROW_LENGTH * Math.cos(angle);
+        double tipX = endX;
+        double tipY = endY;
 
-        double baseY =
-                endY - ARROW_LENGTH * Math.sin(angle);
+        /*
+         * Back point of diamond.
+         */
+        double backX =
+                endX - DIAMOND_LENGTH * Math.cos(angle);
+
+        double backY =
+                endY - DIAMOND_LENGTH * Math.sin(angle);
+
+        /*
+         * Center of diamond.
+         */
+        double centerX =
+                endX
+                - (DIAMOND_LENGTH / 2)
+                * Math.cos(angle);
+
+        double centerY =
+                endY
+                - (DIAMOND_LENGTH / 2)
+                * Math.sin(angle);
 
         /*
          * Perpendicular direction.
@@ -240,33 +266,28 @@ public class ARRImplementation extends ARRRelationship {
                 Math.cos(angle);
 
         /*
-         * Left corner.
+         * Side points.
          */
         double leftX =
-                baseX
-                + ARROW_WIDTH * perpendicularX;
+                centerX
+                + DIAMOND_WIDTH * perpendicularX;
 
         double leftY =
-                baseY
-                + ARROW_WIDTH * perpendicularY;
+                centerY
+                + DIAMOND_WIDTH * perpendicularY;
 
-        /*
-         * Right corner.
-         */
         double rightX =
-                baseX
-                - ARROW_WIDTH * perpendicularX;
+                centerX
+                - DIAMOND_WIDTH * perpendicularX;
 
         double rightY =
-                baseY
-                - ARROW_WIDTH * perpendicularY;
+                centerY
+                - DIAMOND_WIDTH * perpendicularY;
 
-        /*
-         * Hollow triangle.
-         */
-        arrowHead.getPoints().setAll(
-                endX, endY,
+        diamond.getPoints().setAll(
+                tipX, tipY,
                 leftX, leftY,
+                backX, backY,
                 rightX, rightY
         );
     }
@@ -284,17 +305,17 @@ public class ARRImplementation extends ARRRelationship {
                 selected ? 2 : 1;
 
         /*
-         * Dashed line.
+         * Solid line.
          */
         line.setStroke(color);
         line.setStrokeWidth(width);
 
         /*
-         * Hollow triangle.
+         * FILLED diamond.
          */
-        arrowHead.setFill(Color.TRANSPARENT);
-        arrowHead.setStroke(color);
-        arrowHead.setStrokeWidth(width);
+        diamond.setFill(color);
+        diamond.setStroke(color);
+        diamond.setStrokeWidth(width);
 
         /*
          * Endpoint handles.

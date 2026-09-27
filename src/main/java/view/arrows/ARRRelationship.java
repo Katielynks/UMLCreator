@@ -1,4 +1,4 @@
-package view;
+package view.arrows;
 
 import java.util.function.Consumer;
 

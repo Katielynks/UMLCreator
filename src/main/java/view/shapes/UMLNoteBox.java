@@ -1,4 +1,4 @@
-package view;
+package view.shapes;
 
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;

@@ -1,4 +1,4 @@
-package view;
+package view.arrows;
 
 import java.util.function.Consumer;
 
@@ -7,20 +7,20 @@ import javafx.scene.Cursor;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 
-public class ARRAssociation extends ARRRelationship {
+public class ARRAggregation extends ARRRelationship {
 
     private static final double HANDLE_SIZE = 10;
 
-    private static final double ARROW_LENGTH = 16;
-    private static final double ARROW_ANGLE = Math.toRadians(28);
+    private static final double DIAMOND_LENGTH = 22;
+    private static final double DIAMOND_WIDTH = 9;
 
     private final Line hitLine;
     private final Line line;
 
-    // Open arrowhead
-    private final Line arrowLeft;
-    private final Line arrowRight;
+    // Hollow diamond
+    private final Polygon diamond;
 
     private final Region startHandle;
     private final Region endHandle;
@@ -31,7 +31,7 @@ public class ARRAssociation extends ARRRelationship {
     private double endX = 180;
     private double endY = 50;
 
-    public ARRAssociation(
+    public ARRAggregation(
             Consumer<ARRRelationship> onSelected) {
 
         super(onSelected);
@@ -43,22 +43,22 @@ public class ARRAssociation extends ARRRelationship {
         setPickOnBounds(false);
 
         /*
-         * Invisible thick line used as a larger hitbox.
+         * Invisible large hitbox.
          */
         hitLine = new Line();
         hitLine.setStroke(Color.TRANSPARENT);
         hitLine.setStrokeWidth(14);
 
         /*
-         * Visible association line.
+         * Visible solid line.
          */
         line = new Line();
 
         /*
-         * Open arrowhead.
+         * Hollow aggregation diamond.
          */
-        arrowLeft = new Line();
-        arrowRight = new Line();
+        diamond = new Polygon();
+        diamond.setFill(Color.TRANSPARENT);
 
         /*
          * Endpoint handles.
@@ -66,29 +66,30 @@ public class ARRAssociation extends ARRRelationship {
         startHandle = createHandle();
         endHandle = createHandle();
 
-        /*
-         * hitLine goes first so it stays behind
-         * the visible relationship.
-         */
         getChildren().addAll(
-            hitLine,
-            line,
-            arrowLeft,
-            arrowRight,
-            startHandle,
-            endHandle
+                hitLine,
+                line,
+                diamond,
+                startHandle,
+                endHandle
         );
 
         updateLine();
 
-        makeSelectable();
-
+        /*
+         * Drag the actual relationship
+         * to move the entire thing.
+         */
         makeDraggable(
-            hitLine,
-            line,
-            arrowLeft,
-            arrowRight
+                hitLine,
+                line,
+                diamond
         );
+
+        /*
+         * Drag handles to change only
+         * one endpoint.
+         */
         makeStartHandleDraggable();
         makeEndHandleDraggable();
 
@@ -119,39 +120,12 @@ public class ARRAssociation extends ARRRelationship {
         return handle;
     }
 
-    private void makeSelectable() {
-
-        /*
-         * Larger invisible clickable area.
-         */
-        hitLine.setOnMousePressed(event -> {
-            selectThis();
-            event.consume();
-        });
-
-        /*
-         * Visible line is also clickable.
-         */
-        line.setOnMousePressed(event -> {
-            selectThis();
-            event.consume();
-        });
-
-        arrowLeft.setOnMousePressed(event -> {
-            selectThis();
-            event.consume();
-        });
-
-        arrowRight.setOnMousePressed(event -> {
-            selectThis();
-            event.consume();
-        });
-    }
-
     private void makeStartHandleDraggable() {
 
         startHandle.setOnMousePressed(event -> {
+
             selectThis();
+
             event.consume();
         });
 
@@ -174,7 +148,9 @@ public class ARRAssociation extends ARRRelationship {
     private void makeEndHandleDraggable() {
 
         endHandle.setOnMousePressed(event -> {
+
             selectThis();
+
             event.consume();
         });
 
@@ -197,17 +173,37 @@ public class ARRAssociation extends ARRRelationship {
     private void updateLine() {
 
         /*
-         * Visible line.
+         * Calculate the direction of the line.
+         */
+        double angle = Math.atan2(
+                endY - startY,
+                endX - startX
+        );
+
+        /*
+         * Back point of the diamond.
+         *
+         * The visible line ends here so that
+         * it does not draw through the diamond.
+         */
+        double backX =
+                endX - DIAMOND_LENGTH * Math.cos(angle);
+
+        double backY =
+                endY - DIAMOND_LENGTH * Math.sin(angle);
+
+        /*
+         * Visible solid line.
          */
         line.setStartX(startX);
         line.setStartY(startY);
 
-        line.setEndX(endX);
-        line.setEndY(endY);
+        line.setEndX(backX);
+        line.setEndY(backY);
 
         /*
-         * Invisible hitbox follows
-         * the exact same coordinates.
+         * Invisible hitbox covers the whole
+         * relationship.
          */
         hitLine.setStartX(startX);
         hitLine.setStartY(startY);
@@ -228,55 +224,78 @@ public class ARRAssociation extends ARRRelationship {
                 endY - HANDLE_SIZE / 2
         );
 
-        updateArrowHead();
+        updateDiamond();
     }
 
-    private void updateArrowHead() {
+    private void updateDiamond() {
 
         double angle = Math.atan2(
                 endY - startY,
                 endX - startX
         );
 
-        double leftAngle =
-                angle + Math.PI - ARROW_ANGLE;
+        /*
+         * The far tip of the diamond.
+         */
+        double tipX = endX;
+        double tipY = endY;
 
-        double rightAngle =
-                angle + Math.PI + ARROW_ANGLE;
+        /*
+         * Back point of the diamond.
+         */
+        double backX =
+                endX - DIAMOND_LENGTH * Math.cos(angle);
 
-        double leftX =
+        double backY =
+                endY - DIAMOND_LENGTH * Math.sin(angle);
+
+        /*
+         * Center of the diamond.
+         */
+        double centerX =
                 endX
-                + ARROW_LENGTH * Math.cos(leftAngle);
+                - (DIAMOND_LENGTH / 2)
+                * Math.cos(angle);
+
+        double centerY =
+                endY
+                - (DIAMOND_LENGTH / 2)
+                * Math.sin(angle);
+
+        /*
+         * Perpendicular direction.
+         */
+        double perpendicularX =
+                -Math.sin(angle);
+
+        double perpendicularY =
+                Math.cos(angle);
+
+        /*
+         * Two side corners.
+         */
+        double leftX =
+                centerX
+                + DIAMOND_WIDTH * perpendicularX;
 
         double leftY =
-                endY
-                + ARROW_LENGTH * Math.sin(leftAngle);
+                centerY
+                + DIAMOND_WIDTH * perpendicularY;
 
         double rightX =
-                endX
-                + ARROW_LENGTH * Math.cos(rightAngle);
+                centerX
+                - DIAMOND_WIDTH * perpendicularX;
 
         double rightY =
-                endY
-                + ARROW_LENGTH * Math.sin(rightAngle);
+                centerY
+                - DIAMOND_WIDTH * perpendicularY;
 
-        /*
-         * Left side of open arrowhead.
-         */
-        arrowLeft.setStartX(endX);
-        arrowLeft.setStartY(endY);
-
-        arrowLeft.setEndX(leftX);
-        arrowLeft.setEndY(leftY);
-
-        /*
-         * Right side of open arrowhead.
-         */
-        arrowRight.setStartX(endX);
-        arrowRight.setStartY(endY);
-
-        arrowRight.setEndX(rightX);
-        arrowRight.setEndY(rightY);
+        diamond.getPoints().setAll(
+                tipX, tipY,
+                leftX, leftY,
+                backX, backY,
+                rightX, rightY
+        );
     }
 
     @Override
@@ -292,23 +311,20 @@ public class ARRAssociation extends ARRRelationship {
                 selected ? 2 : 1;
 
         /*
-         * Visible association line.
+         * Solid line.
          */
         line.setStroke(color);
         line.setStrokeWidth(width);
 
         /*
-         * Open arrowhead.
+         * Hollow diamond.
          */
-        arrowLeft.setStroke(color);
-        arrowLeft.setStrokeWidth(width);
-
-        arrowRight.setStroke(color);
-        arrowRight.setStrokeWidth(width);
+        diamond.setFill(Color.TRANSPARENT);
+        diamond.setStroke(color);
+        diamond.setStrokeWidth(width);
 
         /*
-         * Endpoint handles only show
-         * when selected.
+         * Endpoint handles.
          */
         startHandle.setVisible(selected);
         endHandle.setVisible(selected);

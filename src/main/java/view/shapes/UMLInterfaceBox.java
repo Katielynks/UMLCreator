@@ -1,4 +1,4 @@
-package view;
+package view.shapes;
 
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
@@ -8,26 +8,27 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
-public class UMLAbstractClassBox extends UMLStandardBox {
+public class UMLInterfaceBox extends UMLStandardBox {
 
-    public UMLAbstractClassBox(
+    public UMLInterfaceBox(
             DoubleSupplier zoomSupplier,
             Consumer<UMLShapeBox> onSelected) {
 
         super(
                 zoomSupplier,
                 onSelected,
-                140,
-                140,
+                120,
+                120,
                 180,
-                135
+                110
         );
 
         VBox classSection = createSection(true);
         VBox attributeSection = createSection(true);
         VBox operationSection = createSection(false);
 
-        Label abstractLabel = createAbstractLabel();
+        Label interfaceLabel =
+                createInterfaceLabel();
 
         TextField className =
                 createTextField("Class", true);
@@ -57,7 +58,7 @@ public class UMLAbstractClassBox extends UMLStandardBox {
         );
 
         classSection.getChildren().addAll(
-                abstractLabel,
+                interfaceLabel,
                 className
         );
 
@@ -72,10 +73,10 @@ public class UMLAbstractClassBox extends UMLStandardBox {
         );
     }
 
-    private Label createAbstractLabel() {
+    private Label createInterfaceLabel() {
 
         Label label =
-                new Label("<<Abstract>>");
+                new Label("<<Interface>>");
 
         label.setMaxWidth(Double.MAX_VALUE);
         label.setAlignment(Pos.CENTER);
