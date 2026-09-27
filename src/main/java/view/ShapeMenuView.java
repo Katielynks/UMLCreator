@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import java.util.function.Consumer;
 
 public class ShapeMenuView {
 
@@ -27,6 +28,8 @@ public class ShapeMenuView {
     private final Runnable onAggregationButtonClicked;
     private final Runnable onCompositionButtonClicked;
 
+    private final Consumer<Color> onColorChanged;
+
     public ShapeMenuView(Runnable onClassButtonClicked, 
         Runnable onInterfaceButtonClicked, 
         Runnable onAbstractClassButtonClicked,
@@ -37,7 +40,8 @@ public class ShapeMenuView {
         Runnable onInheritanceButtonClicked,
         Runnable onImplementationButtonClicked,
         Runnable onAggregationButtonClicked,
-        Runnable onCompositionButtonClicked) {
+        Runnable onCompositionButtonClicked,
+        Consumer<Color> onColorChanged) {
         this.onClassButtonClicked = onClassButtonClicked;
         this.onInterfaceButtonClicked = onInterfaceButtonClicked;
         this.onAbstractClassButtonClicked = onAbstractClassButtonClicked;
@@ -50,6 +54,8 @@ public class ShapeMenuView {
         this.onImplementationButtonClicked = onImplementationButtonClicked;
         this.onAggregationButtonClicked = onAggregationButtonClicked;
         this.onCompositionButtonClicked = onCompositionButtonClicked;
+
+        this.onColorChanged = onColorChanged;
 
         shapeMenu = createShapeMenu();
     }
@@ -123,7 +129,7 @@ public class ShapeMenuView {
     }
 
 private HBox createColorPickerControl() {
-    ColorPicker colorPicker = new ColorPicker(Color.web("#000000ff"));
+    ColorPicker colorPicker = new ColorPicker(Color.WHITE);
 
     Rectangle colorPreview = new Rectangle(110, 14);
     colorPreview.setFill(colorPicker.getValue());
@@ -160,7 +166,14 @@ private HBox createColorPickerControl() {
     });
 
     colorPicker.setOnAction(event -> {
-        colorPreview.setFill(colorPicker.getValue());
+
+        Color selectedColor = colorPicker.getValue();
+
+        // Update the color preview
+        colorPreview.setFill(selectedColor);
+
+        // Send the color to CanvasView
+        onColorChanged.accept(selectedColor);
     });
 
     return colorControl;

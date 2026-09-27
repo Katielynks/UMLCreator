@@ -265,7 +265,7 @@ public class UMLPackage extends UMLShapeBox {
 
         resizeHandle.setVisible(selected);
 
-        String borderColor = selected ? "#4f8cff" : "white";
+        String borderColor = selected ? "#4f8cff" : getShapeColorCss();
         String borderWidth = selected ? "2" : "1";
 
         tab.setStyle(

@@ -24,7 +24,8 @@ public class MainView {
             canvasView::addInheritance,
             canvasView::addImplementation,
             canvasView::addAggregation,
-            canvasView::addComposition
+            canvasView::addComposition,
+            canvasView::changeSelectedColor
         ).getView());
         
         root.setCenter(canvasView.getView());

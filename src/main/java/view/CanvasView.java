@@ -26,6 +26,8 @@ public class CanvasView {
     private final Pane shapeLayer;
     private final Scale shapeScale;
 
+    private Object selectedObject;
+
     public CanvasView() {
         canvas = new Canvas(800, 600);
         shapeLayer = new Pane();
@@ -212,6 +214,7 @@ public class CanvasView {
     }
 
     private void selectOnly(Object selectedObject) {
+        this.selectedObject = selectedObject;
 
         for (javafx.scene.Node node : shapeLayer.getChildren()) {
 
@@ -224,6 +227,20 @@ public class CanvasView {
                 ARRRelationship relationship = (ARRRelationship) node;
                 relationship.setSelected(node == selectedObject);
             }
+        }
+    }
+
+    public void changeSelectedColor(Color color) {
+
+        if (selectedObject instanceof UMLShapeBox) {
+
+            UMLShapeBox shape = (UMLShapeBox) selectedObject;
+            shape.setShapeColor(color);
+
+        } else if (selectedObject instanceof ARRRelationship) {
+
+            ARRRelationship relationship = (ARRRelationship) selectedObject;
+            relationship.setShapeColor(color);
         }
     }
 

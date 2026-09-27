@@ -305,7 +305,7 @@ public class ARRAggregation extends ARRRelationship {
         Color color =
                 selected
                         ? Color.web("#4f8cff")
-                        : Color.WHITE;
+                        : getShapeColor();
 
         double width =
                 selected ? 2 : 1;

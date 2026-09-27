@@ -331,7 +331,7 @@ public abstract class UMLStandardBox extends UMLShapeBox {
         } else {
             setStyle(
                     "-fx-background-color: transparent;" +
-                    "-fx-border-color: white;" +
+                    "-fx-border-color: " + getShapeColorCss() + ";" +
                     "-fx-border-width: 1;"
             );
         }

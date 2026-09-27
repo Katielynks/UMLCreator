@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 public abstract class ARRRelationship extends Pane {
 
@@ -17,6 +18,8 @@ public abstract class ARRRelationship extends Pane {
 
     private double startLayoutX;
     private double startLayoutY;
+
+    private Color shapeColor = Color.WHITE;
 
     public ARRRelationship(
             Consumer<ARRRelationship> onSelected) {
@@ -35,6 +38,15 @@ public abstract class ARRRelationship extends Pane {
 
     public boolean isSelected() {
         return selected;
+    }
+
+    public void setShapeColor(Color color) {
+        this.shapeColor = color;
+        updateSelectionStyle(isSelected());
+    }
+
+    protected Color getShapeColor() {
+        return shapeColor;
     }
 
     /*
