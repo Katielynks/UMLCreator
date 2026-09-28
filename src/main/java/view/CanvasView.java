@@ -16,6 +16,7 @@ import view.arrows.*;
 import view.shapes.*;
 
 import view.export.DiagramSave;
+import view.export.DiagramNew;
 
 public class CanvasView {
 
@@ -31,6 +32,7 @@ public class CanvasView {
     private Object selectedObject;
 
     private final DiagramSave diagramSave;
+    private final DiagramNew diagramNew;
 
     public CanvasView() {
         canvas = new Canvas(800, 600);
@@ -45,6 +47,7 @@ public class CanvasView {
                 shapeLayer,
                 shapeScale
         );
+        diagramNew = new DiagramNew(shapeLayer);
     }
 
     public StackPane getView() {
@@ -307,5 +310,25 @@ public class CanvasView {
 
     public void saveDiagramAsJpeg() {
         diagramSave.saveDiagramAsJpeg(canvasPattern);
+    }
+
+    public void newDiagram() {
+
+        // Remove all shapes and arrows.
+        diagramNew.clearDiagram();
+
+        // Clear the currently selected object.
+        selectedObject = null;
+
+        // Reset zoom.
+        zoomLevel = 1.0;
+
+        shapeScale.setX(1.0);
+        shapeScale.setY(1.0);
+
+        // Reset to the blank background.
+        canvasPattern = "blank";
+
+        drawCanvasBackground();
     }
 }

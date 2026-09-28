@@ -13,7 +13,9 @@ public class MainView {
         CanvasView canvasView = new CanvasView();
 
         root.setTop(
-                new TopMenuView(canvasView::saveDiagramAsJpeg).getView()
+                new TopMenuView(
+                    canvasView::newDiagram,
+                    canvasView::saveDiagramAsJpeg).getView()
         );
         root.setLeft(new ShapeMenuView(
             canvasView::addClassBox,
