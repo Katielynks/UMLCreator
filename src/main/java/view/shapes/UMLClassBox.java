@@ -5,6 +5,7 @@ import java.util.function.DoubleSupplier;
 
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 public class UMLClassBox extends UMLStandardBox {
 
@@ -63,5 +64,7 @@ public class UMLClassBox extends UMLStandardBox {
                 attributeSection,
                 operationSection
         );
+
     }
+
 }

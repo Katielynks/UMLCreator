@@ -260,6 +260,15 @@ public class UMLPackage extends UMLShapeBox {
         });
     }
 
+    public void restoreDiagramSize(double width, double height) {
+
+        setPrefWidth(width);
+        setPrefHeight(height);
+
+        body.setPrefWidth(width);
+        body.setPrefHeight(height - TAB_HEIGHT);
+    }
+
     @Override
     protected void updateSelectionStyle(boolean selected) {
 

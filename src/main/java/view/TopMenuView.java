@@ -13,13 +13,19 @@ public class TopMenuView {
 
     private final Runnable onSaveClicked;
     private final Runnable onNewClicked;
+    private final Runnable onOpenClicked;
+    private final Runnable onExportClicked;
 
     public TopMenuView(
         Runnable onNewClicked,
-        Runnable onSaveClicked
+        Runnable onSaveClicked,
+        Runnable onOpenClicked,
+        Runnable onExportClicked
         ) {
         this.onSaveClicked = onSaveClicked;
         this.onNewClicked = onNewClicked;
+        this.onOpenClicked = onOpenClicked;
+        this.onExportClicked = onExportClicked;
         topMenu = createTopMenu();
     }
 
@@ -31,9 +37,11 @@ public class TopMenuView {
         Button newButton = UIComponentFactory.createMenuButton("New");
         newButton.setOnAction(event -> onNewClicked.run());
         Button openButton = UIComponentFactory.createMenuButton("Open");
+        openButton.setOnAction(event -> onOpenClicked.run());
         Button saveButton = UIComponentFactory.createMenuButton("Save");
         saveButton.setOnAction(event -> onSaveClicked.run());
         Button exportButton = UIComponentFactory.createMenuButton("Export");
+        exportButton.setOnAction(event -> onExportClicked.run());
 
         HBox menu = new HBox(10);
         menu.setPadding(new Insets(10));

@@ -106,6 +106,19 @@ public abstract class ARRRelationship extends Pane {
         }
     }
 
+    public Color getDiagramColor() {
+        return getShapeColor();
+    }
+
+    public abstract double[] getEndpoints();
+
+    public abstract void setEndpoints(
+            double startX,
+            double startY,
+            double endX,
+            double endY
+    );
+
     protected abstract void updateSelectionStyle(
             boolean selected);
 }

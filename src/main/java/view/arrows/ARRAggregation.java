@@ -341,4 +341,29 @@ public class ARRAggregation extends ARRRelationship {
                 "-fx-border-width: 1;"
         );
     }
+
+    @Override
+    public double[] getEndpoints() {
+        return new double[] {
+                startX,
+                startY,
+                endX,
+                endY
+        };
+    }
+
+    @Override
+    public void setEndpoints(
+            double startX,
+            double startY,
+            double endX,
+            double endY) {
+
+        this.startX = startX;
+        this.startY = startY;
+        this.endX = endX;
+        this.endY = endY;
+
+        updateLine();
+    }
 }

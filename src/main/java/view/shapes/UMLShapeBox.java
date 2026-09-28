@@ -44,4 +44,8 @@ public abstract class UMLShapeBox extends VBox {
                 Math.round(shapeColor.getBlue() * 255)
         );
     }
+
+    public Color getDiagramColor() {
+        return shapeColor;
+    }
 }

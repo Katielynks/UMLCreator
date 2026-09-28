@@ -17,6 +17,8 @@ import view.shapes.*;
 
 import view.export.DiagramSave;
 import view.export.DiagramNew;
+import view.export.DiagramExport;
+import view.export.DiagramOpen;
 
 public class CanvasView {
 
@@ -33,6 +35,8 @@ public class CanvasView {
 
     private final DiagramSave diagramSave;
     private final DiagramNew diagramNew;
+    private final DiagramExport diagramExport;
+    private final DiagramOpen diagramOpen;
 
     public CanvasView() {
         canvas = new Canvas(800, 600);
@@ -48,6 +52,20 @@ public class CanvasView {
                 shapeScale
         );
         diagramNew = new DiagramNew(shapeLayer);
+        diagramExport = new DiagramExport(
+                canvasArea,
+                shapeLayer,
+                () -> canvasPattern,
+                () -> zoomLevel
+        );
+
+        diagramOpen = new DiagramOpen(
+                canvasArea,
+                shapeLayer,
+                () -> zoomLevel,
+                this::selectOnly,
+                this::applyLoadedCanvasSettings
+        );
     }
 
     public StackPane getView() {
@@ -328,6 +346,30 @@ public class CanvasView {
 
         // Reset to the blank background.
         canvasPattern = "blank";
+
+        drawCanvasBackground();
+    }
+
+    // Export the entire diagram to JSON.
+    public void exportDiagramAsJson() {
+        diagramExport.exportJson();
+    }
+
+    // Open an existing UML diagram from JSON.
+    public void openDiagramFromJson() {
+        diagramOpen.openJson();
+    }
+
+    // Restore the background and zoom from a saved diagram.
+    private void applyLoadedCanvasSettings(
+            String pattern,
+            Double zoom) {
+
+        canvasPattern = pattern;
+        zoomLevel = zoom;
+
+        shapeScale.setX(zoomLevel);
+        shapeScale.setY(zoomLevel);
 
         drawCanvasBackground();
     }
