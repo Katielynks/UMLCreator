@@ -1,5 +1,6 @@
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import view.MainView;
 
@@ -17,6 +18,11 @@ public class Main extends Application {
 
         primaryStage.setTitle("UML Diagram Creator");
         primaryStage.setScene(scene);
+        primaryStage.getIcons().add(
+            new Image(
+                    getClass().getResourceAsStream("/icon.png")
+            )
+        );
         primaryStage.show();
     }
 
