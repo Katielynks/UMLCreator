@@ -1,7 +1,11 @@
 # UML Diagram Creator
 
 A desktop UML diagram editor built with JavaFX.
-Ccreate, edit, customize, save, and reopen UML diagrams using an interactive canvas.
+Create, edit, customize, save, and reopen UML diagrams with draggable and resizable components.
+
+## Preview
+
+![UML Diagram Creator](src/main/resources/uml-diagram-creator.png)
 
 ## Features
 
@@ -101,10 +105,6 @@ Saves the current UML diagram as a JPEG image.
 ### Export
 
 Exports the current diagram as a JSON file so that it can be opened and edited again later.
-
-## Preview
-
-![UML Diagram Creator](src/main/resources/uml-diagram-creator.png)
 
 ## Requirements
 
