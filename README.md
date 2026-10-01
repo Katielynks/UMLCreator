@@ -1,6 +1,6 @@
 # UML Diagram Creator
 
-A desktop UML diagram editor built with **JavaFX**.
+A desktop UML diagram editor built with JavaFX.
 Ccreate, edit, customize, save, and reopen UML diagrams using an interactive canvas.
 
 ## Features
@@ -92,19 +92,7 @@ Clears the current diagram and resets the canvas.
 
 ### Open
 
-Opens a previously exported UML diagram from a JSON file.
-
-The JSON file restores diagram information such as:
-
-- Shapes
-- Relationships
-- Positions
-- Sizes
-- Text
-- Colors
-- Arrow endpoints
-- Canvas background
-- Zoom level
+Opens a previously exported UML diagram from a JSON file. The JSON file restores all diagram information.
 
 ### Save
 
@@ -114,28 +102,19 @@ Saves the current UML diagram as a JPEG image.
 
 Exports the current diagram as a JSON file so that it can be opened and edited again later.
 
-## Screenshot
+## Preview
 
-![UML Diagram Creator](assets/uml-diagram-creator.png)
-
-> Add the application screenshot to an `assets` folder in the repository using the filename `uml-diagram-creator.png`.
-
-## Technologies
-
-- Java
-- JavaFX
-- Maven
-- Gson
-- JSON
+![UML Diagram Creator](src/main/resources/uml-diagram-creator.png)
 
 ## Requirements
 
-Make sure the following are installed:
+### Running from Source
+
+To build and run the project from source, the following must be installed:
 
 - Java 21 or newer
 - Apache Maven
 
-Check your Java installation with:
+### Windows Download
 
-```bash
-java -version
+Download the Windows ZIP from the **Releases** section, extract it, and run `UML Diagram Creator.exe`
