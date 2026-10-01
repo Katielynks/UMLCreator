@@ -118,3 +118,5 @@ To build and run the project from source, the following must be installed:
 ### Windows Download
 
 Download the Windows ZIP from the **Releases** section, extract it, and run `UML Diagram Creator.exe`
+
+© 2026 katielynks. You may use and modify this project with attribution. Please do not claim the original work as your own.
